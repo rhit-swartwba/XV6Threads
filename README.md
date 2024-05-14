@@ -77,11 +77,9 @@ Releases a lock. Typically for <code>printf</code> statements from user code on 
 ## Initialization Changes
 <code>xv6-riscv/user/xv6test.c</code>: Created new test source code file to test our new system calls or features
 
-<code>xv6-riscv/Makefile</code>: Added <code>$U/_xv6test</code> at line 136 and changed <code>CPUS := 3</code> to <code>CPUS := 1</code> in line 158.
-
 To use or test this, run <code>make qemu</code>. Then, type <code>ls</code> and make sure <code>xv6test</code> is there. Then, run <code>xv6test</code> to run your unit tests and verify the code is working.
 
-## How to Implement #5
+## How to Implement Multiple Threads Allocating Pages
 The <code>struct proc</code> now has 3 extra members: <code>subthreads</code>, <code>is_mainthread</code>, and <code>active_subthreads</code>
 
 When all processes are getting initialized, it was already the case that their <code>state</code> is set to <code>UNUSED</code>. Now, we also set <code>is_mainthread=1</code> and <code>active_subthreads=0</code>.
