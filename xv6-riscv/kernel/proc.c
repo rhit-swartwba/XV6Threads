@@ -930,7 +930,6 @@ tjoin(int pid, uint64 addr)
                                   sizeof(stackAddr)) < 0) {
              release(&pp->lock);
              release(&wait_lock);
-						 printf("PANICCCCC: failed stackAddr in join\n");
              return -1;
             }
 					int child_pid = pp->pid;

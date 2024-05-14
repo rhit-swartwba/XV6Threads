@@ -8,6 +8,7 @@
 
 int value = 0;
 int arr[NUM_THREADS+1];
+int *addr;
 
 int thread_create(void* (*fnc)(void *), int* pid, void* arg)
 {
@@ -93,6 +94,26 @@ void* writer(void *arg) {
   exit(0);
 }
 
+void* reader_malloc(void *arg) {
+	tlock();
+	printf("Malloc reader has arrived\n");
+	printf("The number read from %p is %d\n", addr, *addr);
+	free(addr);
+	tunlock();
+	exit(0);
+}
+
+void* writer_malloc(void *arg) {
+	tlock();
+	printf("Malloc writer has arrived\n");
+	int *ptr = malloc(sizeof(int));
+	addr = ptr;
+	*addr = 7;
+	printf("Just malloced set the value at %p to be %d\n", ptr, *ptr);
+	tunlock();
+	exit(0);
+}
+
 void test1() {
   int pids[NUM_THREADS+1];
   int args[NUM_THREADS+1];
@@ -150,6 +171,16 @@ void test4() {
  exit(0);
 }
 
+void test5() {
+	int pids[2];
+ thread_create(writer_malloc, &pids[0], NULL);
+ sleep(10);
+ thread_create(reader_malloc, &pids[1], NULL);
+ thread_join(pids[0]);
+ thread_join(pids[1]);
+ exit(0);
+}
+
 int main(int argc, char *argv[]) {
   int testNum = 1;
   if(argc == 2) {
@@ -171,6 +202,10 @@ int main(int argc, char *argv[]) {
     case 4:
       printf("Running test 4: One reader and one writer thread to clearly show modification of variables\n");
       test4();
+      break;
+    case 5:
+      printf("Running test 5: MALLOC - One reader and one writer thread to clearly show modification of variables\n");
+      test5();
       break;
     default:
       printf("Running test 1: Modifying the same global array\n");
